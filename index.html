@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MediTech OS</title>
     
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json?v=1.1">
     <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -52,19 +52,30 @@
     <iframe id="app-frame" src="https://script.google.com/macros/s/AKfycbzEtGfBvXQhaXLGMi1U7NcRMAV9rh233GF6S80ZPAq6whGit1X8OQcyG_IQXZRmpFDRFw/exec" allow="camera; microphone; fullscreen"></iframe>
 
     <script>
-        // 3. The Logic: Wait for Google to finish, then swap the screens!
+        // 1. Handle Splash Screen Transition
         document.getElementById('app-frame').onload = function() {
-            // Fade out the splash screen
             document.getElementById('splash-screen').style.opacity = '0';
-            
-            // Fade in the actual application
             document.getElementById('app-frame').style.opacity = '1';
-            
-            // Remove the splash screen from memory after the fade animation finishes
             setTimeout(() => { 
                 document.getElementById('splash-screen').style.display = 'none'; 
             }, 400);
         };
+
+        // 2. REGISTER SERVICE WORKER WITH SUBFOLDER SCOPE
+        // This is crucial for GitHub Pages
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // Change 'meditech-app' below if your repository name is different
+                const repoName = '/meditech-app/'; 
+                navigator.serviceWorker.register('sw.js', { scope: repoName })
+                .then(function(registration) {
+                    console.log('ServiceWorker registered with scope:', registration.scope);
+                })
+                .catch(function(err) {
+                    console.log('ServiceWorker registration failed:', err);
+                });
+            });
+        }
     </script>
 </body>
 </html>
